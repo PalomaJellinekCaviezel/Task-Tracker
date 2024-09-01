@@ -1,0 +1,8 @@
+.ds-none {
+    display: none;
+}
+
+.completed .task-name {
+    text-decoration: line-through;
+    color: grey;
+}

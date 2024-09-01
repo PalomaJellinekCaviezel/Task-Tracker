@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="main-container">
+
+        <div class="auth-container">
+            <h2>Bienvenido</h2>
+            <div class="auth-form">
+                <input type="text" id="username" placeholder="Nombre de usuario" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <div class="buttons">
+                    <button id="loginButton">Iniciar Sesión</button>
+                    <button id="registerButton">Registrarse</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-container ds-none">
+            <header>
+                <h1>To Do List</h1>
+            </header>
+            <section>
+                <ul class="task-list"></ul>
+            </section>
+            <section class="empty-state">
+                <p>No tienes tareas pendientes.</p>
+                <p>Agrega una dandole click al boton verde!</p>
+            </section>
+            <button class="fab-button">+</button>
+        </div>
+
+        <div class="task-form ds-none">
+            <h2>Nueva Tarea</h2>
+            <p class="flash-error"></p>
+            <input type="text" id="taskName" placeholder="Nombre de la tarea" required>
+            <select id="taskCategory" required>
+                <option value="" disabled selected>Selecciona una categoria</option>
+                <option value="Work">Trabajo</option>
+                <option value="Home">Hogar</option>
+                <option value="Studies">Estudios</option>
+            </select>
+            <textarea id="taskDescription" placeholder="Descripcion de la tarea" required></textarea>
+            <div class="buttons">
+                <button id="addTask">Agregar Tarea</button>
+                <button id="goBack">Volver</button>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmación -->
+        <div id="confirmDialog" class="modal ds-none">
+            <div class="modal-content">
+                <h3>¿Estás seguro?</h3>
+                <p>Esta acción eliminará la tarea permanentemente</p>
+                <div class="buttons">
+                    <button id="confirmDelete">Confirmarr</button>
+                    <button id="cancelDelete">Cancelar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Detalles de la Tarea -->
+        <div id="taskDetails" class="modal ds-none">
+            <div class="modal-content">
+                <h3>Detalles de la tarea</h3>
+                <p id="taskNameDetails"></p>
+                <div id="taskCategoryImgContainer"></div>
+                <p id="taskDescription">Descripción:</p>
+                <p id="taskDescriptionValue"></p>
+                <div class="buttons">
+                    <button id="closeDetails">Cerrar</button>
+                    <button id="deleteTask">Eliminar tarea</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
