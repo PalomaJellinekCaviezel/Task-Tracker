@@ -101,10 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (loggedInUser) {
             localStorage.setItem('currentUser', username);
+            tasks = loadTasks(); // Cargar tareas específicas para el usuario
             authContainer.style.display = 'none';
             taskContainer.style.display = 'block';
             header.style.display = 'flex';
             fabButton.style.display = 'block';
+            renderTasks(); // Renderizar tareas después de iniciar sesión
+
         } else {
             showFlashError('Nombre de usuario o contraseña incorrectos.');
         }
@@ -201,6 +204,21 @@ document.addEventListener('DOMContentLoaded', () => {
         fabButton.style.display = show ? 'none' : 'block';
     };
 
+    const saveTasks = () => {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
+        }
+    };
+
+    const loadTasks = () => {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            return JSON.parse(localStorage.getItem(`tasks_${currentUser}`)) || [];
+        }
+        return [];
+    };
+
     const handleTaskAddition = () => {
         const taskName = taskNameInput.value.trim();
         const taskCategory = categorySelect.value;
@@ -209,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (taskName && taskCategory && taskDescription) {
             const newTask = { name: taskName, category: taskCategory, description: taskDescription, completed: false };
             tasks.push(newTask);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            saveTasks();
             handleFormVisibility(false);
             taskNameInput.value = '';
             categorySelect.value = '';
@@ -217,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTasks();
         } else {
             showFlashError('Por favor, completa todos los campos.');
+            return;
         }
     };
 
@@ -241,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleDeleteConfirmation = () => {
         if (taskToDelete !== null) {
             tasks.splice(taskToDelete, 1);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            saveTasks();
             taskToDelete = null;
             toggleModal(confirmDialog, false);
             renderTasks();
@@ -287,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.target.classList.contains('complete-btn') && index !== undefined) {
             tasks[index].completed = !tasks[index].completed;
             localStorage.setItem('tasks', JSON.stringify(tasks));
+            saveTasks();
             renderTasks();
         }
     });
