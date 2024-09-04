@@ -10,58 +10,84 @@
 
 <body>
     <main class="main-container">
+        <div class="header-container">
+
+            <header id="header">
+                <h2>To Do List</h2>
+                <button id="logoutButton">Cerrar sesión</button>
+            </header>
+
+        </div>
 
         <div class="auth-container">
-            <h2>Bienvenido</h2>
+
+            <h1>Ingresa a tu To Do List</h1>
             <div class="auth-form">
+                <p class="flash-error"></p>
                 <input type="text" id="username" placeholder="Nombre de usuario" required>
                 <input type="password" id="password" placeholder="Contraseña" required>
                 <div class="buttons">
-                    <button id="loginButton">Iniciar Sesión</button>
                     <button id="registerButton">Registrarse</button>
+                    <button id="loginButton">Iniciar Sesión</button>
                 </div>
             </div>
+
         </div>
 
         <div class="task-container ds-none">
-            <header>
-                <h1>To Do List</h1>
-            </header>
+
             <section>
                 <ul class="task-list"></ul>
             </section>
             <section class="empty-state">
-                <p>No tienes tareas pendientes.</p>
-                <p>Agrega una dandole click al boton verde!</p>
+                <div>
+                    <strong>
+                        <p class="quote"></p>
+                    </strong>
+                </div>
+                <div>
+                    <p>No tienes tareas pendientes.</p>
+                    <p>Agrega una dandole click al boton "+"</p>
+                </div>
+
             </section>
             <button class="fab-button">+</button>
+
         </div>
 
         <div class="task-form ds-none">
-            <h2>Nueva Tarea</h2>
-            <p class="flash-error"></p>
-            <input type="text" id="taskName" placeholder="Nombre de la tarea" required>
-            <select id="taskCategory" required>
-                <option value="" disabled selected>Selecciona una categoria</option>
-                <option value="Work">Trabajo</option>
-                <option value="Home">Hogar</option>
-                <option value="Studies">Estudios</option>
-            </select>
-            <textarea id="taskDescription" placeholder="Descripcion de la tarea" required></textarea>
-            <div class="buttons">
-                <button id="addTask">Agregar Tarea</button>
-                <button id="goBack">Volver</button>
+
+            <div class="newTask-form">
+                <h2>Nueva Tarea</h2>
+                <p class="flash-error"></p>
+                <input type="text" id="taskName" placeholder="Nombre de la tarea" required>
+                <select id="taskCategory" required>
+                    <option value="" disabled selected>Selecciona una categoria</option>
+                    <option value="Work">Trabajo</option>
+                    <option value="Home">Hogar</option>
+                    <option value="Studies">Estudios</option>
+                </select>
+                <textarea id="taskDescription" placeholder="Descripcion de la tarea" required></textarea>
+                <div class="buttons">
+                    <button id="goBack">Volver</button>
+                    <button id="addTask">Agregar Tarea</button>
+                </div>
             </div>
+
+
         </div>
 
         <!-- Modal de Confirmación -->
         <div id="confirmDialog" class="modal ds-none">
             <div class="modal-content">
-                <h3>¿Estás seguro?</h3>
-                <p>Esta acción eliminará la tarea permanentemente</p>
-                <div class="buttons">
-                    <button id="confirmDelete">Confirmarr</button>
+                <div>
+                    <h3>¿Estás seguro?</h3>
+                    <p>Esta acción eliminará la tarea permanentemente</p>
+                </div>
+
+                <div class="action-buttons">
                     <button id="cancelDelete">Cancelar</button>
+                    <button id="confirmDelete">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -69,12 +95,20 @@
         <!-- Modal de Detalles de la Tarea -->
         <div id="taskDetails" class="modal ds-none">
             <div class="modal-content">
-                <h3>Detalles de la tarea</h3>
-                <p id="taskNameDetails"></p>
                 <div id="taskCategoryImgContainer"></div>
-                <p id="taskDescription">Descripción:</p>
-                <p id="taskDescriptionValue"></p>
-                <div class="buttons">
+
+                <div class="task-details-text">
+                    <div class="task-name-title">
+                        <strong>Tarea:</strong>
+                        <p id="taskNameDetails"></p>
+                    </div>
+                    <div>
+                        <p id="taskDescription">Descripción:</p>
+                        <p id="taskDescriptionValue"></p>
+                    </div>
+
+                </div>
+                <div class="action-buttons">
                     <button id="closeDetails">Cerrar</button>
                     <button id="deleteTask">Eliminar tarea</button>
                 </div>

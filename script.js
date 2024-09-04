@@ -16,15 +16,131 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelDeleteButton = document.getElementById('cancelDelete');
     const deleteTaskButton = document.getElementById('deleteTask');
     const closeDetailsButton = document.getElementById('closeDetails');
+    const authContainer = document.querySelector('.auth-container');
+    const taskContainer = document.querySelector('.task-container');
+    const header = document.getElementById('header');
 
-    let tasks = [];
+    const user = document.getElementById('username');
+    const password = document.getElementById('password');
+    const loginButton = document.getElementById('loginButton');
+    const registerButton = document.getElementById('registerButton');
+    const logoutButton = document.getElementById('logoutButton');
+
+    const inspirationalQuotes = [
+        "La vida es 10% lo que te ocurre y 90% cómo reaccionas a ello.",
+        "El único modo de hacer un gran trabajo es amar lo que haces.",
+        "No cuentes los días, haz que los días cuenten.",
+        "El éxito es la suma de pequeños esfuerzos repetidos día tras día.",
+        "No te rindas, cada fracaso es una oportunidad para empezar de nuevo con más experiencia.",
+        "Cree en ti mismo y todo será posible.",
+        "El futuro pertenece a aquellos que creen en la belleza de sus sueños.",
+        "Haz hoy lo que otros no quieren, haz mañana lo que otros no pueden."
+    ];
+
+
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     let taskToDelete = null;
     let taskToView = null;
     let previousView = null;
+    let usersList = JSON.parse(localStorage.getItem("localSave")) || [];
+
+    // Ocultar por defecto
+    taskContainer.style.display = 'none';
+    header.style.display = 'none';
+    fabButton.style.display = 'none';
+    taskForm.style.display = 'none';
+    taskDetails.style.display = 'none';
+    confirmDialog.style.display = 'none';
+
+    // Verificar si el usuario ya tiene una sesión iniciada
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        authContainer.style.display = 'none';
+        taskContainer.style.display = 'block';
+        header.style.display = 'flex';
+        fabButton.style.display = 'block';
+    }
+
+    // Registro de usuario
+    registerButton.addEventListener("click", () => {
+        const username = user.value.trim();
+        const userPassword = password.value.trim();
+
+        if (!username || !userPassword) {
+            showFlashError('Por favor, completa todos los campos.');
+            return;
+        }
+
+        const userExists = usersList.some(user => user.username === username);
+
+        if (userExists) {
+            showFlashError('El usuario ya está registrado.');
+        } else {
+            let newUser = { username: username, password: userPassword };
+            usersList.push(newUser);
+            localStorage.setItem("localSave", JSON.stringify(usersList));
+            localStorage.setItem('currentUser', username);
+            authContainer.style.display = 'none';
+            taskContainer.style.display = 'block';
+            header.style.display = 'flex';
+            fabButton.style.display = 'block';
+        }
+    });
+
+    // Inicio de sesión
+    loginButton.addEventListener("click", () => {
+        const username = user.value.trim();
+        const userPassword = password.value.trim();
+
+        if (!username || !userPassword) {
+            showFlashError('Por favor, completa todos los campos.');
+            return;
+        }
+
+        const loggedInUser = usersList.find(user => user.username === username && user.password === userPassword);
+
+        if (loggedInUser) {
+            localStorage.setItem('currentUser', username);
+            authContainer.style.display = 'none';
+            taskContainer.style.display = 'block';
+            header.style.display = 'flex';
+            fabButton.style.display = 'block';
+        } else {
+            showFlashError('Nombre de usuario o contraseña incorrectos.');
+        }
+    });
+
+    // Cerrar sesión
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        authContainer.style.display = 'block';
+        taskContainer.style.display = 'none';
+        header.style.display = 'none';
+        fabButton.style.display = 'none';
+        taskForm.style.display = 'none'; // Asegúrate de ocultar el formulario de tareas al cerrar sesión
+
+    });
 
     // Funciones auxiliares
+
+    const getRandomQuote = () => {
+        const randomIndex = Math.floor(Math.random() * inspirationalQuotes.length);
+        return `"${inspirationalQuotes[randomIndex]}"`;
+    };
+
+    const renderEmptyState = () => {
+        emptyState.style.display = 'flex';
+        taskList.style.display = 'none';
+        const quoteElement = document.querySelector('.empty-state .quote');
+        quoteElement.textContent = getRandomQuote();
+    };
+
+
     const toggleModal = (modal, show) => {
         modal.style.display = show ? 'flex' : 'none';
+        if (show) {
+            modal.style.zIndex = '1000';
+        }
     };
 
     const showFlashError = (message) => {
@@ -40,8 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderTasks = () => {
         taskList.innerHTML = '';
         if (tasks.length === 0) {
-            emptyState.style.display = 'flex';
-            taskList.style.display = 'none';
+            renderEmptyState(); // Llama a la función para mostrar la frase inspiradora
         } else {
             emptyState.style.display = 'none';
             taskList.style.display = 'block';
@@ -49,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const li = document.createElement('li');
                 li.className = task.completed ? 'completed' : '';
                 li.innerHTML =
-                    <div class="task-summary">
+                    `<div class="task-summary">
                         <div class="task-info">
                             <i class="${getIconClass(task.category)} category-icon"></i>
                             <span class="task-name">${task.name}</span>
@@ -59,8 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <button class="complete-btn" data-index="${index}">✔</button>
                             <button class="delete-btn" data-index="${index}">🗑️</button>
                         </div>
-                    </div>
-                    ;
+                    </div>`;
                 taskList.appendChild(li);
             });
         }
@@ -83,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleFormVisibility = (show) => {
         taskForm.style.display = show ? 'block' : 'none';
         taskList.style.display = show ? 'none' : 'block';
-        emptyState.style.display = 'none';
+        emptyState.style.display = tasks.length === 0 && !show ? 'flex' : 'none'; // Muestra el estado vacío si no hay tareas
         fabButton.style.display = show ? 'none' : 'block';
     };
 
@@ -93,7 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskDescription = taskDescriptionInput.value.trim();
 
         if (taskName && taskCategory && taskDescription) {
-            tasks.push({ name: taskName, category: taskCategory, description: taskDescription, completed: false });
+            const newTask = { name: taskName, category: taskCategory, description: taskDescription, completed: false };
+            tasks.push(newTask);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
             handleFormVisibility(false);
             taskNameInput.value = '';
             categorySelect.value = '';
@@ -112,76 +228,69 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('taskDescriptionValue').textContent = task.description;
             taskToView = index;
             previousView = 'taskList';
+
             toggleModal(taskDetails, true);
-            taskList.style.display = 'none';
-            fabButton.style.display = 'none';
         }
+    };
+
+    const handleDeleteTask = (index) => {
+        taskToDelete = index;
+        toggleModal(confirmDialog, true);
     };
 
     const handleDeleteConfirmation = () => {
         if (taskToDelete !== null) {
             tasks.splice(taskToDelete, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
             taskToDelete = null;
-            renderTasks();
             toggleModal(confirmDialog, false);
-            updateFabButtonVisibility();
+            renderTasks();
         }
-    };
-
-    const toggleComplete = (index) => {
-        tasks[index].completed = !tasks[index].completed;
-        renderTasks();
     };
 
     const handleCancelDelete = () => {
+        taskToDelete = null;
         toggleModal(confirmDialog, false);
-        if (previousView === 'taskDetails') {
-            toggleModal(taskDetails, true);
-            taskList.style.display = 'none';
-        } else if (previousView === 'taskList') {
-            renderTasks();
-        }
-        updateFabButtonVisibility();
     };
 
-    const closeDetailsAndUpdateFab = () => {
-        toggleModal(taskDetails, false);
-        taskList.style.display = 'block';
-        updateFabButtonVisibility();
-    };
-
-    // Event Listeners
+    // Eventos
     fabButton.addEventListener('click', () => handleFormVisibility(true));
-    backButton.addEventListener('click', () => handleFormVisibility(false));
+
     addTaskButton.addEventListener('click', handleTaskAddition);
 
-    taskList.addEventListener('click', (event) => {
-        const index = event.target.dataset.index;
-        if (event.target.classList.contains('view-btn')) {
-            showTaskDetails(index);
-        } else if (event.target.classList.contains('complete-btn')) {
-            toggleComplete(index);
-        } else if (event.target.classList.contains('delete-btn')) {
-            taskToDelete = index;
-            previousView = 'taskList';
-            toggleModal(confirmDialog, true);
-            taskList.style.display = 'none';
-            fabButton.style.display = 'none';
+    backButton.addEventListener('click', () => handleFormVisibility(false));
+
+    deleteTaskButton.addEventListener('click', () => {
+        if (taskToView !== null) {
+            handleDeleteTask(taskToView);
+            taskToView = null;
+            toggleModal(taskDetails, false);
         }
+    });
+
+    closeDetailsButton.addEventListener('click', () => {
+        taskToView = null;
+        toggleModal(taskDetails, false);
     });
 
     confirmDeleteButton.addEventListener('click', handleDeleteConfirmation);
+
     cancelDeleteButton.addEventListener('click', handleCancelDelete);
-    closeDetailsButton.addEventListener('click', closeDetailsAndUpdateFab);
-    deleteTaskButton.addEventListener('click', () => {
-        if (taskToView !== null) {
-            taskToDelete = taskToView;
-            toggleModal(taskDetails, false);
-            toggleModal(confirmDialog, true);
-            previousView = 'taskDetails';
+
+    // Manejo de clics en las tareas
+    taskList.addEventListener('click', (e) => {
+        const index = e.target.dataset.index;
+        if (e.target.classList.contains('view-btn') && index !== undefined) {
+            showTaskDetails(index);
+        } else if (e.target.classList.contains('delete-btn') && index !== undefined) {
+            handleDeleteTask(index);
+        } else if (e.target.classList.contains('complete-btn') && index !== undefined) {
+            tasks[index].completed = !tasks[index].completed;
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderTasks();
         }
     });
 
-    // Render inicial
+    // Inicialización
     renderTasks();
-})
+});
