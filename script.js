@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const password = document.getElementById('password');
     const loginButton = document.getElementById('loginButton');
     const registerButton = document.getElementById('registerButton');
+    const welcomeMessage = document.querySelector('.welcome-message');
     const logoutButton = document.getElementById('logoutButton');
 
     const inspirationalQuotes = [
@@ -51,6 +52,11 @@ document.addEventListener('DOMContentLoaded', () => {
     taskDetails.style.display = 'none';
     confirmDialog.style.display = 'none';
 
+
+    const showWelcomeMessage = (username) => {
+        welcomeMessage.textContent = `To Do List de ${username}`;
+    };
+
     // Verificar si el usuario ya tiene una sesión iniciada
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
@@ -58,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         taskContainer.style.display = 'block';
         header.style.display = 'flex';
         fabButton.style.display = 'block';
+        showWelcomeMessage(currentUser);  // Mostrar mensaje de bienvenida
+
     }
 
     // Registro de usuario
@@ -85,6 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
             taskContainer.style.display = 'block';
             header.style.display = 'flex';
             fabButton.style.display = 'block';
+            showWelcomeMessage(username);  // Mostrar mensaje de bienvenida
+
         }
     });
 
@@ -108,11 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
             header.style.display = 'flex';
             fabButton.style.display = 'block';
             renderTasks(); // Renderizar tareas después de iniciar sesión
+            showWelcomeMessage(username);  // Mostrar mensaje de bienvenida
+
 
         } else {
             showFlashError('Nombre de usuario o contraseña incorrectos.');
         }
     });
+
+
 
     // Cerrar sesión
     logoutButton.addEventListener('click', () => {
@@ -122,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         header.style.display = 'none';
         fabButton.style.display = 'none';
         taskForm.style.display = 'none'; // Asegúrate de ocultar el formulario de tareas al cerrar sesión
+        welcomeMessage.textContent = '';  // Limpiar el mensaje de bienvenida
 
     });
 

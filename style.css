@@ -105,6 +105,8 @@ h3 {
 #logoutButton {
     background-color: #FFF;
     cursor: pointer;
+    max-width: 100px;
+    font-size: small;
     transition: transform 0.3s ease; /* Transición suave para el efecto de escalado */
 
 }
@@ -126,7 +128,7 @@ h3 {
     transform: translate(-50%, -50%);
     color: #fa7070;
     font-size: medium;
-    width: 50%;
+    width: 80%;
     height: 50vh;
 }
 
@@ -304,3 +306,9 @@ strong {
     font-size: small;
 }
 
+.welcome-message {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    font-size: x-large;
+}
