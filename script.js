@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const emptyState = document.querySelector('.empty-state');
     const fabButton = document.querySelector('.fab-button');
     const taskForm = document.querySelector('.task-form');
-    const flashError = document.querySelector('.flash-error');
     const taskNameInput = document.getElementById('taskName');
     const categorySelect = document.getElementById('taskCategory');
     const taskDescriptionInput = document.getElementById('taskDescription');
@@ -80,6 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
             usersList.push(newUser);
             localStorage.setItem("localSave", JSON.stringify(usersList));
             localStorage.setItem('currentUser', username);
+            tasks = loadTasks();
+            renderTasks();
             authContainer.style.display = 'none';
             taskContainer.style.display = 'block';
             header.style.display = 'flex';
@@ -147,9 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const showFlashError = (message) => {
-        flashError.textContent = message;
-        flashError.style.display = 'block';
-        setTimeout(() => flashError.style.display = 'none', 3000);
+        const errorElements = document.querySelectorAll('.flash-error')
+        for (const errorElement of errorElements) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => errorElement.style.display = 'none', 3000);
+        }
     };
 
     const updateFabButtonVisibility = () => {
@@ -312,5 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Inicialización
+    tasks = loadTasks()
     renderTasks();
 });

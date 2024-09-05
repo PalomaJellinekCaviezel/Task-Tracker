@@ -242,7 +242,7 @@ h3 {
 
 #taskCategoryImgContainer {
     position: absolute;
-    top: 5px;
+    top: 20px;
     right: 10px;
     max-width: 80px; /* Tamaño ajustado */
     max-height: 80px;
